@@ -5,14 +5,35 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   TextEditingController _controller = TextEditingController();
+  String _textoSalvo = "Nada Salvo!";
 
-  _salvar() {}
+  _salvar() async {
+    String valorDigitado = _controller.text;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("nome", valorDigitado);
+    print("Operação (Salvar): $valorDigitado");
+  }
 
-  _recuperar() {}
+  _recuperar() async {
+    final prefs = await SharedPreferences.getInstance();
+        setState(() {
+      _textoSalvo =  prefs.getString("nome") ?? "Nada Salvo!";
+    });
+    print("Operação (Recuperar): $_textoSalvo");
+  }
 
-  _remover() {}
+  _remover() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("nome");
+    print("Operação (Remover): $_textoSalvo");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +50,7 @@ class MyApp extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                "nada salvo",
+                _textoSalvo,
                 style: TextStyle(fontSize: 20),
               ),
               TextField(
